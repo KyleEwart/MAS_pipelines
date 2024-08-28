@@ -1,3 +1,5 @@
+<center><h1>Multiplex amplicon sequencing pipelines</h1></center>
+
 **Summary**
 -------------
 
