@@ -10,7 +10,7 @@ This FreeBayes SNP calling pipeline follows is similar to what is implemented by
 
 For additional information on SNP calling parameters, filtering, and conversion steps, see the [snippy package repo](https://github.com/tseemann/snippy) and the pipeline parameters below.
 
-
+---
 ***Configuring pipeline***
 
 All of the dependancy programs are included in the snippy conda package. This can be setup following instructions on the [snippy package repo](https://github.com/tseemann/snippy). Alternatively, each dependency can be downloaded individually, and its binary can be added to the PATH environment variable. These include:  
@@ -27,7 +27,7 @@ All of the dependancy programs are included in the snippy conda package. This ca
 * *snp-sites*
 * *any2fasta*
 
-
+---
 ***Input files***
 
 Three input files are required:
@@ -35,7 +35,7 @@ Three input files are required:
 * **Reference sequence template file**: This is a fasta file containing all of your SNP regions. You should include ample flanking sequence on either side of your target SNP to ensure raw reads are mapped (e.g. ~75 bp) - this will depend on your input read length. The SNP site can be denoted as an `N`. The fasta sequence ID should be the SNP name. See an example in the `example_inputs` folder.
 * **SNP position file**: This is a tab separated file which includes a column of SNP names and the position of the SNP in your *'Reference sequence template file'*. See an example in the `example_inputs` folder.
 
-
+---
 ***Running the pipeline***
 
 Edit the varaibles at the top of the FreeBayes pipeline bash script in the current folder:
