@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 
 # Variables
-FASTQ=../data/5.demux/barcode05/fastq_runid_unknown_0.fastq
-REFERENCE=Tiger-SNPs_sequences-templates_biallelic_longer.fas
-SNP_POSITIONS=snp-positions.txt
-SAMPLE=TG_003_08a_50plex_v2
+FASTQ=./fastq_B/AJ56291_B_SQK-NBD114-96_barcode71.fastq
+REFERENCE=Cheetah_snp_ref_setB.fasta
+SNP_POSITIONS=cheetah_SNP-positions_B.txt
+SAMPLE=AJ56291_B_barcode71
 MIN_COVERAGE=8
 THREADS=2
 REMOVE_FILES=true
 
 # Export snippy binaries path. Hash out if not required.
-export PATH=
+export PATH=/Users/kyleewart/miniconda3/envs/snippy_env/bin:$PATH
 # e.g. "export PATH=/Users/username/anaconda3/envs/snippy_env/bin:$PATH"
 # Activate snippy conda environment. This assumes you called your snippy conda environment 'snippy_env'. Hash out if not required.
 eval "$(conda shell.bash hook)"
@@ -45,6 +45,7 @@ bcftools view --include "QUAL>=50 && FMT/DP>=$MIN_COVERAGE && (FMT/AO)/(FMT/DP)>
 # FMT/DP>=10: This filter ensures that variants have a depth (DP) value of 10 or greater in the sample(s). The FMT/DP field represents the read depth at the variant position, indicating the number of reads covering that position.
 # (FMT/AO)/(FMT/DP)>=0: This filter calculates the allele frequency of the variant (AO) and divides it by the read depth (DP) to obtain the allele frequency ratio. The filter ensures that the allele frequency ratio is greater than or equal to zero, meaning there is at least one read supporting the variant allele. The FMT/AO field represents the alternate allele observation count.
 
+
 # Format to tab file:
 snippy-vcf_to_tab --ref ${REFERENCE} --vcf ${SAMPLE}.filt.vcf > ${SAMPLE}.filt.tab
 
@@ -52,13 +53,13 @@ snippy-vcf_to_tab --ref ${REFERENCE} --vcf ${SAMPLE}.filt.vcf > ${SAMPLE}.filt.t
 # This if statement tests if the SNP_POSITIONS variable contains an empty string
 # These lines also remove columns that aren't needed
 if [ -z ${SNP_POSITIONS} ]; then
-    tail -n +2 ${SAMPLE}.filt.tab | awk -F "\t" -v OFS='\t' '{print $1,$2,$6}' > ${SAMPLE}.filt-target.tab
+    tail -n +2 ${SAMPLE}.filt.tab | grep -v "complex" | awk -F "\t" -v OFS='\t' '{print $1,$2,$6}' > ${SAMPLE}.filt-target.tab
 else
     grep -Ff ${SNP_POSITIONS} ${SAMPLE}.filt.tab | awk -F "\t" -v OFS='\t' '{print $1,$2,$6}' > ${SAMPLE}.filt-target.tab
 fi
 
 # Add column headings to the file
-echo -e "SNP\tPosition\tEvidence" | cat - ${SAMPLE}.filt-target.tab > ${SAMPLE}.snps.tsv
+echo -e "SNP\tPosition\tEvidence" | cat - ${SAMPLE}.filt-target.tab | sed 's/ N:0//g' > ${SAMPLE}.snps.tsv
 
 # Check the condition and delete intermediate files if true
 if [ ${REMOVE_FILES} = true ]; then
